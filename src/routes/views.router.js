@@ -5,7 +5,7 @@ import { uploadProductImage } from '../config/multer-configs.js'
 export const router = express.Router()
 const productManager = new ProductManager()
 
-router.get('/', async (req,res)=>{
+router.get('/products', async (req,res)=>{
     try{
         const products = await productManager.getProducts()
         //Mapeo para poder renderizar en handlebars
@@ -22,11 +22,36 @@ router.get('/', async (req,res)=>{
             thumbnails: item.thumbnails
         }))
 
-        res.render('home',{productsList:mappedProducts})
+        res.render('products',{productsList:mappedProducts})
     }
     catch(error){
         console.log(error)
         res.status(500).render('error', { errorMessage: 'Error interno del servidor' });
+    }
+})
+
+router.get('/product/:pid',async(req,res)=>{
+    //Recibo por parametro el id del producto y lo uso para pedir al manager los datos de dicho producto..
+    const {pid} = req.params
+    try {
+        const product = await productManager.getProductById(pid)
+        //ya tengo el producto, ahora lo proceso para poder usarlo en handlebars
+        const productDetail = {
+            id: product.id, 
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            img: product.img,
+            code: product.code,
+            category: product.category,
+            stock: product.stock,
+            status: product.status,
+            thumbnails: product.thumbnails
+        }
+
+       res.render('productdetail', {productDetail: productDetail})
+    } catch (error) {
+        
     }
 })
  

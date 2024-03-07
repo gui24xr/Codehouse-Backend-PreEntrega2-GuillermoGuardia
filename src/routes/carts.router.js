@@ -46,12 +46,11 @@ router.post('/api/carts/:cid/products/:pid',async(req,res)=>{
     //Agregar el producto pasado por paremtro (su id) al carrito pasado por su parametro id.
     //De estar el producto incrementa la cantidad de uno, de no estar lo crea y agrega una unidad del mismo.
     const {cid:cartId,pid:productId} = req.params
-    console.log('Desde postman: ',req.params)
-       
+      
     try{
-        const response = await cartsManager.addProductInCart(cartId,productId,1)
+        const response = await cartsManager.addProductInCart(cartId,productId)
         if (response.success){
-            console.log(response.success)
+            //console.log(response.success)
             res.json({cartId: response.cart._id, products: response.cart.products})
         }
         else{
@@ -66,3 +65,56 @@ router.post('/api/carts/:cid/products/:pid',async(req,res)=>{
     
 })
 
+router.delete('/api/carts/:cid/products/:pid', async(req,res)=>{
+    const {cid,pid} = req.params // Obtengo los parametros.
+    
+    try {
+        const response = await cartsManager.deleteProductInCart(cid,pid)
+        if (response.success){
+            //console.log(response.success)
+            res.json({cartId: response.cart._id, products: response.cart.products})
+        }
+        else{
+            res.send(response.message)
+        }
+       
+    }
+    catch{
+        console.log('Error al ingresar el producto carrito !.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
+})
+
+router.put('/api/carts/:cid', async(req,res)=>{
+
+    res.send('jsdjsdss')
+})
+
+
+router.put('/api/carts/:cid/products/:pid', async(req,res)=>{
+    const {cid:cartId,pid:productId} = req.params // Obtengo los parametros.
+    const {quantity} = req.body
+    
+    console.log('quanr: ', quantity)
+    
+    try{
+        const response = await cartsManager.addProductInCart(cartId,productId,quantity)
+        if (response.success){
+            //console.log(response.success)
+            res.json({cartId: response.cart._id, products: response.cart.products})
+        }
+        else{
+            res.send(response.message)
+        }
+       
+    }
+    catch{
+        console.log('Error al ingresar el producto carrito !.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
+})
+
+router.delete('/api/carts/:cid', async(req,res)=>{
+
+    res.send('jsdjsdss')
+})

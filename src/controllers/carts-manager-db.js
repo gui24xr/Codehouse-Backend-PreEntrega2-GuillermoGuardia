@@ -88,7 +88,14 @@ async addProductInCart(cartId,productId,quantity){
                 //existProductInCart.quantity += quantity
                 //busco la posicion del array a modificar
                 const position = searchedCart.products.findIndex(item => item.product.toString() == productId )
-                searchedCart.products[position].quantity +=1
+                
+                //Si me pasaron cantidad por parametro pongo esa cantidad, si no, solo agrego uno.
+               
+                if (!quantity) {
+                    searchedCart.products[position].quantity +=1
+                } else {
+                    searchedCart.products[position].quantity = quantity
+                }
             }
             else{
               //Agrego el producto si no exciste en el carro
@@ -115,4 +122,64 @@ async addProductInCart(cartId,productId,quantity){
             }
         }
     }
+
+
+       
+async deleteProductInCart(cartId,productId){
+    /*Esta funcion elimina product Id pasado por parametro al carrito pasado por parametro y Retorna un objeto asi:
+   {success: true/false, message: '', cart: carrito actualizado/null}*/
+   
+   //En este caso tmb deberiamos ver que productId es valido ya que estamos con mongo
+   //Busco el carrito donde voy a agregar el producto y la cantidad.
+   try{
+       const response = await this.getCartById(cartId)
+       //Si no encontro el carrito o hubo un error salimos mostrando el mensaje correspondiente.
+       if (!response.success){
+           console.log(`El cartId proporcionado (${cartId}) no existe o no es un ObjectId válido.`);
+           return {
+               success: false, 
+               message: response.message, //Enviamos el mensaje que nos dio getCartById
+               cart: null
+               }
+       }
+       else{
+           //Si se encontro el carrito vamos a proceder a eliminar el producto.
+           //Trabajo con el carrito encontrado.
+           const searchedCart = response.cart //Trabajo con searchedCart por comodidad
+           const existProductInCart = searchedCart.products.some(item => item.product.toString() == productId )
+           //Find devuelve undefined si no encuentra elemento que cumpla condicion o sea no existe el producto.
+           //Find devuelve la primer coinciddencia
+           if (existProductInCart){
+              
+               console.log('El producto esta en el carro, procedemos a eliminarlo...')
+               const position = searchedCart.products.findIndex(item => item.product.toString() == productId )
+               searchedCart.products.splice(position,1)
+           }
+           else{
+             //Agrego el producto si no exciste en el carro
+             console.log(`El producto ${productId} no esta en el carro,no hay nada para eliminar !`)
+           } 
+
+           //Actualizo en la BD
+           searchedCart.markModified("carts")
+           await searchedCart.save()
+          //AHora retorno xq salio todo OK          
+           return {
+               success: true, 
+               message: 'Se elimino producto...', //Enviamos el mensaje que nos dio getCartById
+               cart: searchedCart
+               }
+           }
+       }
+       catch(error){
+           console.error('Error al obtener carrito por id.', error);
+           return { 
+               success: false, 
+               message: 'Error al obtener carrito por id (Desde add).', error, 
+               cart: null 
+           }
+       }
+   }
+
+   
 }
