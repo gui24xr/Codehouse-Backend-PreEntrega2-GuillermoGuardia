@@ -8,6 +8,8 @@ export const router = express.Router()
 //Creo instancia de mi cart Manager.
 const cartsManager = new CartsManager()
 
+const productManager = new ProductManager()
+
 
 router.get('/api/carts/:cid',async (req,res)=>{
     //Esta ruta devuelve un carrito
@@ -86,17 +88,31 @@ router.delete('/api/carts/:cid/products/:pid', async(req,res)=>{
 })
 
 router.put('/api/carts/:cid', async(req,res)=>{
-
-    res.send('jsdjsdss')
+    //Este endpoint toma por body un array de productos y cantidades y los agrega al carrito cid
+    //Va a recorrer el array que reccibe por body y usando la funcion addProductInCart agregue esos productos.
+    const {cid:cartId} = req.params
+    const {productsArray} = req.body
+    try{
+        const response = await cartsManager.addProductsListInCart(cartId,JSON.parse(productsArray))
+        if (response.success){
+            //console.log(response.success)
+            res.json({cartId: response.cart._id, products: response.cart.products})
+        }
+        else{
+            res.send(response.message)
+        }
+       
+    }
+    catch{
+        console.log('Error al ingresar el producto carrito !.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
 })
 
 
 router.put('/api/carts/:cid/products/:pid', async(req,res)=>{
     const {cid:cartId,pid:productId} = req.params // Obtengo los parametros.
     const {quantity} = req.body
-    
-    console.log('quanr: ', quantity)
-    
     try{
         const response = await cartsManager.addProductInCart(cartId,productId,quantity)
         if (response.success){
@@ -116,5 +132,21 @@ router.put('/api/carts/:cid/products/:pid', async(req,res)=>{
 
 router.delete('/api/carts/:cid', async(req,res)=>{
 
-    res.send('jsdjsdss')
+    const {cid:cartId} = req.params // Obtengo los parametros.
+    
+    try {
+        const response = await cartsManager.clearCart(cartId)
+        if (response.success){
+            //console.log(response.success)
+            res.json({cartId: response.cart._id, products: response.cart.products})
+        }
+        else{
+            res.send(response.message)
+        }
+       
+    }
+    catch{
+        console.log('Error al vaciar el carrito !.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
 })
