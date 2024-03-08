@@ -150,3 +150,42 @@ router.delete('/api/carts/:cid', async(req,res)=>{
         res.status(500).json({error: 'Error del servidor'})
     }
 })
+
+router.get('/carts/:cid',async(req,res)=>{
+    const {cid:cartId} = req.params
+    try{
+       const response = await cartsManager.getCartById(cartId)
+       if ( response.success ){
+            console.log('Cartin: ', response.cart.products)
+            //mapeo la lista de productos a renderizar y luego obtengo su total del carrito.
+            const productsList = response.cart.products.map(item => (
+                {id:item.product._id,
+                img:item.product.img,
+                title:item.product.title,
+                price:item.product.price,
+                quantity:item.quantity,
+                totalAmount: Number(item.quantity) * Number(item.product.price)
+
+            }))
+
+            //Calculo el total del carro
+           let cartAmount = 0;
+           for (let p in productsList) {
+            cartAmount = cartAmount + productsList[p].totalAmount
+        }
+
+          
+           
+            res.render('cart',{cartId:cartId, productsList: productsList, cartAmount:cartAmount })
+       }
+       else{
+        res.send(response.message)
+       }
+    
+    }catch(error){
+        console.log('Error al obtener el carrito !.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
+
+    
+})
