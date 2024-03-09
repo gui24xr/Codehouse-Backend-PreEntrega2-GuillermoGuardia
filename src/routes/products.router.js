@@ -90,3 +90,72 @@ router.put('/api/products/:pid', async(req, res)=>{
 
 
 
+router.get('/pruebas',async(req,res)=>{
+    try{
+        const productos = await productManager.getProductsPaginate(2,1)
+        console.log(productos)
+        res.json({p: productos})
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
+   
+})
+
+
+router.get('/products', async (req,res)=>{
+    /*Al hacer una peticion a '/products' pido los productos al product Manager.
+      Si todo sale Ok miro req.query si trajo limit o no trajo. Si trajo limit devuelvo el numero de objetos que me pide en limit.
+      SI no trajo limit devuelvo la lista entera de productos.
+      Si ocurrio un error doy aviso y devuelvo en la respuesta un status en forma de json.
+    */  
+      const {limit,page,sort} = req.query
+    try{
+        console.log('fdgfsddgd', limit,page,sort)
+     
+        /*
+        if (limit){
+        const paginate = await productManager.getProductsPaginate(4,1,sort)
+        } else{
+        const paginate = await productManager.getProductsPaginate(10,page,sort)
+        }*/
+        const paginate = await productManager.getProductsPaginate(limit ? limit : 10,page? page : 1,sort)
+      
+        
+        console.log(paginate)
+        //Hago un mapeo para mandar a rendrizar. Primero mapeo a docs.
+        const mappedProducts = paginate.docs.map(item => ({
+            id: item.id, 
+            title: item.title,
+            description: item.description,
+            price: item.price,
+            img: item.img,
+            code: item.code,
+            category: item.category,
+            stock: item.stock,
+            status: item.status,
+            thumbnails: item.thumbnails
+        }))
+
+        
+     
+        //Transformo la informacion para mostrar en la vista.
+       const valuesToRender = {
+        productsList:mappedProducts,
+        hasPrevPage : paginate.hasPrevPage ? 'SI' : 'No',
+        hasNextage : paginate.hasNextPage ? 'SI' : 'No',
+        prevPage: paginate.prevPage ? paginate.prevPage : '-',
+        nextPage: paginate.nextPage ? paginate.nextPage : '-',
+        actualPage: paginate.page,
+        totalPages: paginate.totalPages
+    
+    }
+       res.render('productspaginate',valuesToRender)
+
+
+
+    }catch(error){
+        console.log('Error al obtener productos.', error)
+        res.status(500).json({error: 'Error del servidor'})
+    }
+})

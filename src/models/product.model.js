@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const collectionName = 'products'
 
@@ -44,5 +45,7 @@ const productSchema = new mongoose.Schema({
     
 })
 
+//Le agrego el plugin para paginate.
+productSchema.plugin(mongoosePaginate)
 //creo y exporto la clase con la cual voy a interacturar con la coleccion.
 export const ProductModel = new mongoose.model(collectionName,productSchema)

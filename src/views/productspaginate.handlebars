@@ -1,0 +1,83 @@
+
+
+<!--CONTAINER PAGE -->
+<div>
+     <!--BANNER SUPERIOR -->
+    <div class="w-full flex items-center pl-10 bg-blue-600 text-white object-fill py-4">
+      <p class="text-2xl leading-none">/</p>
+    </div>
+
+    <!--TITULO -->
+    <div class="w-full flex items-center pl-10 bg-white text-white py-4">
+      <p class="text-black text-2xl leading-none">PRODUCTOS PAGINATE EN STOCK</p> 
+    </div>
+
+ 
+
+
+     <!--FORM -->
+    <div class="w-full flex items-center pl-10 bg-white text-white py-4">
+       <form action="/products" method="get" class="flex items-center space-x-4">
+            <label for="sort" class="text-sm font-medium text-gray-600">Ordenar por precio:</label>
+            <select type="select" id="sort" name="sort" class="text-black border rounded-md px-3 py-2 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+                 <option value="1">Ascendente</option>
+                <option value="0">Descendente</option>
+            </select>
+            <label for="limit" class="text-sm font-medium text-gray-600">Cantidad por pagina:</label>
+            <input type="number" id="limit" name="limit" value="1"
+            class="text-black border rounded-md px-3 py-2 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+            <label for="page" class="text-sm font-medium text-gray-600">Página:</label>
+            <input type="number" id="page" name="page" value="1" min="1" max={{totalPages}}
+            class="text-black border rounded-md px-3 py-2 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
+              <p class="text-sm font-medium text-gray-600">de {{totalPages}}</p>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+                Ir
+            </button>
+            <div class="flex space-x-2">
+                <button type="button" class="bg-gray-300 text-gray-600 px-3 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
+                    Anterior
+                </button>
+                <button type="button" class="bg-gray-300 text-gray-600 px-3 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300">
+                    Siguiente
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+         <!-- Datos paginacion -->
+    <div class="w-full flex flex-col items-center pl-10 bg-white text-white py-4">
+      <p class="text-sm font-medium text-gray-600">Pagina actual: {{actualPage}}</p>
+      <p class="text-sm font-medium text-gray-600">Total paginas: {{totalPages}}</p>
+      <p class="text-sm font-medium text-gray-600">Prev page: {{prevPage}}</p>
+      <p class="text-sm font-medium text-gray-600">Next page:{{nextPage}} </p>
+    </div>
+
+
+
+    <!--CONTAINER GRIDS PRODUCTS -->
+    <div class="py-10 px-5 grid grid-cols-6 gap-4 pb-10">
+        
+         {{#each productsList}}
+            <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <a href="/product/{{this.id}}">
+                    <img class="p-8 rounded-t-lg" src={{this.img}} alt={{this.title}} />
+                </a>
+                <div class="px-5 pb-5">
+                    <a href="#">
+                        <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{{this.title}}</h5>
+                    </a>
+                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                        {{this.description}}
+                    </p>
+                    <div class="flex col items-center justify-between">
+                        <span class="text-3xl font-bold text-gray-900 dark:text-white">${{this.price}}</span>
+                       
+                    </div>
+                     <a href="#" class="text-white bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</a>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+    
+</div>

@@ -43,6 +43,18 @@ export class ProductManager{
       }
     }
 
+    async getProductsPaginate(limit,page,sort){
+        try {
+          const products = await ProductModel.paginate({},{limit:limit,page:page})
+          //Tengamos la consideracion que mongo los id los pasa como 'id...', arreglo eso antes de retornar.
+          return products
+  
+        } catch (error) {
+          console.log('Error al recuperar los productos...')
+          throw error
+        }
+      }
+
     async getProductById(id){
        try{
         const product = await ProductModel.findById(id)
