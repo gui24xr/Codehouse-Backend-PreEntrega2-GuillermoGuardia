@@ -48,12 +48,16 @@ router.post('/api/carts/:cid/products/:pid',async(req,res)=>{
     //Agregar el producto pasado por paremtro (su id) al carrito pasado por su parametro id.
     //De estar el producto incrementa la cantidad de uno, de no estar lo crea y agrega una unidad del mismo.
     const {cid:cartId,pid:productId} = req.params
-      
+    const {quantity} = req.body
+     console.log('FFFF: ',cartId,productId) 
+     console.log('Quantity: ',quantity) 
     try{
-        const response = await cartsManager.addProductInCart(cartId,productId)
+        const response = await cartsManager.addProductInCart(cartId,productId,Number(quantity))
         if (response.success){
             //console.log(response.success)
-            res.json({cartId: response.cart._id, products: response.cart.products})
+            //res.json({cartId: response.cart._id, products: response.cart.products})
+            //Redirijo a esta direccion para que se vea grafico lo que hay en el carrito que estamos agregando de manera provisoria.
+            res.redirect('/carts/65ea0a4ec26ddb52bfc5b436');
         }
         else{
             res.send(response.message)

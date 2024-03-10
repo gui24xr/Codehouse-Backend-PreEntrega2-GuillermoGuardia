@@ -37,7 +37,7 @@ router.get('/product/:pid',async(req,res)=>{
         const product = await productManager.getProductById(pid)
         //ya tengo el producto, ahora lo proceso para poder usarlo en handlebars
         const productDetail = {
-            id: product.id, 
+            id: product._id, 
             title: product.title,
             description: product.description,
             price: product.price,
