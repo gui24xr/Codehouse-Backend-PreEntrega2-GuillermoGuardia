@@ -45,7 +45,11 @@ export class ProductManager{
 
     async getProductsPaginate(limit,page,sort){
         try {
-          const products = await ProductModel.paginate({},{limit:limit,page:page})
+          //sort puede ser 1,-1 o undefined
+          const sortBy = sort == 1 ? {price:1} : sort == -1 ? {price:-1} : {}
+          console.log('SortBy en manager:', sortBy)
+          const products = await ProductModel.paginate({},{limit:limit,page:page, sort:sortBy})
+
           //Tengamos la consideracion que mongo los id los pasa como 'id...', arreglo eso antes de retornar.
           return products
   

@@ -104,27 +104,15 @@ router.get('/pruebas',async(req,res)=>{
 
 
 router.get('/products', async (req,res)=>{
-    /*Al hacer una peticion a '/products' pido los productos al product Manager.
-      Si todo sale Ok miro req.query si trajo limit o no trajo. Si trajo limit devuelvo el numero de objetos que me pide en limit.
-      SI no trajo limit devuelvo la lista entera de productos.
-      Si ocurrio un error doy aviso y devuelvo en la respuesta un status en forma de json.
-    */  
-      const {limit,page,sort} = req.query
+    const {limit,page,sort} = req.query
     try{
+        //Sort el formulario solo permitira que solo llegue -1,1 o 0
         console.log('Parametros que llegaron', limit,page,sort)
-     
-        /*
-        if (limit){
-        const paginate = await productManager.getProductsPaginate(4,1,sort)
-        } else{
-        const paginate = await productManager.getProductsPaginate(10,page,sort)
-        }*/
-        const paginate = await productManager.getProductsPaginate(limit ? limit : 10,page? page : 1,sort)
-      
-        
+        const sortValue = sort == '1' ? 1 : sort == '-1' ? -1 : 0
+        console.log('SortValue', sortValue)
+        const paginate = await productManager.getProductsPaginate(limit ? limit : 10,page ? page : 1,sortValue)
         //console.log(paginate)
-        //Hago un mapeo para mandar a rendrizar. Primero mapeo a docs.
-        
+        //Hago un mapeo de docs para mandar a rendrizar en handlebars. 
         const mappedProducts = paginate.docs.map(item => ({
             id: item.id, 
             title: item.title,
@@ -138,10 +126,7 @@ router.get('/products', async (req,res)=>{
             thumbnails: item.thumbnails
         }))
 
-        
-     
-        //Transformo la informacion para mostrar en la vista.
-        //tambien envio algo en json para manejar cosas en el scrpt.
+        //Valores que necesito para renderizar con handlebars.
        const valuesToRender = {
         productsList:mappedProducts,
         totalDocs : paginate.totalDocs,

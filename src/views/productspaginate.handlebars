@@ -20,8 +20,9 @@
        <form id='paginationForm' action = '/products' method="get" class="flex items-center space-x-4">
             <label for="sort" class="text-sm font-medium text-white">Ordenar por precio:</label>
             <select type="select" id="sort" name="sort" class="text-black border rounded-md px-3 py-1 text-sm leading-5 focus:outline-none focus:ring focus:border-blue-300">
-                 <option value="1">Ascendente</option>
-                <option value="0">Descendente</option>
+                <option value="0">Sin ordenar</option>
+                <option value="1">Ascendente</option>
+                <option value="-1">Descendente</option>
             </select>
             <label for="inputLimit" class="text-sm font-medium text-white">Cantidad por pagina:</label>
             <input type="number" id="inputLimit" name="limit" value={{limit}}
