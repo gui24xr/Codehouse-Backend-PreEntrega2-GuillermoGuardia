@@ -104,13 +104,15 @@ router.get('/pruebas',async(req,res)=>{
 
 
 router.get('/products', async (req,res)=>{
-    const {limit,page,sort} = req.query
+    const {limit,page,sort,query} = req.query
     try{
         //Sort el formulario solo permitira que solo llegue -1,1 o 0
-        console.log('Parametros que llegaron', limit,page,sort)
+        console.log('Parametros que llegaron', limit,page,sort,query)
+        //Por ahora dejo query para que entre por params
+        //La idea es cuanto este implementado en el form armar la query para enviar al manager
         const sortValue = sort == '1' ? 1 : sort == '-1' ? -1 : 0
         console.log('SortValue', sortValue)
-        const paginate = await productManager.getProductsPaginate(limit ? limit : 10,page ? page : 1,sortValue)
+        const paginate = await productManager.getProductsPaginate(limit ? limit : 10,page ? page : 1,sortValue,query)
         //console.log(paginate)
         //Hago un mapeo de docs para mandar a rendrizar en handlebars. 
         const mappedProducts = paginate.docs.map(item => ({
